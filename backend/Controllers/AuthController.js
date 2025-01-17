@@ -67,6 +67,20 @@ const login = async(req,res) =>{
     }
 }
 
+const logout = async (req, res) => {
+    try {
+        // Invalidate the token if you implement server-side token blacklisting
+        res.status(200).json({
+            message: "Logout successful",
+            success: true,
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Internal server error",
+            success: false,
+        });
+    }
+}
 module.exports = {
-    signup,login
+    signup,login,logout,
 }

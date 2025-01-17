@@ -1,26 +1,30 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useNavigate } from "react-router-dom";
 import { login } from "../../services/api";
+import { VerifyToken } from "./VerifyToken";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // To navigate to the Signup page
-
+  const [error, setError] = useState(""); // To show errors on the UI
+  const navigate = useNavigate();
+  VerifyToken();  
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(""); // Reset error before new login attempt
+  
     try {
       const response = await login({ email, password });
-      console.log("Login successful:", response);
-      
-      // Handle login success (e.g., save token, redirect)
-      // Store token in local storage or state management (optional)
-      localStorage.setItem("jwtToken", response.jwtToken); // Save JWT token if needed
-      
-      // Redirect to dashboard
+
+      // Save token and user data in localStorage
+      localStorage.setItem("jwtToken", response.jwtToken);
+      localStorage.setItem("user", JSON.stringify({ email: response.email, name: response.name }));
+
+      // Redirect to the dashboard
       navigate("/dashboard");
     } catch (err) {
-      console.log(err.response?.data?.message || "Something went wrong");
+      // Display error message
+      setError(err.response?.data?.message || "Invalid email or password");
     }
   };
 
@@ -35,6 +39,7 @@ const Login = () => {
         </div>
         <div className="card bg-base-100 w-full max-w-sm shadow-2xl">
           <form className="card-body" onSubmit={handleLogin}>
+            {error && <div className="alert alert-error">{error}</div>} {/* Show error message */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -77,7 +82,7 @@ const Login = () => {
               Don't have an account?{" "}
               <span
                 className="text-blue-500 cursor-pointer font-bold"
-                onClick={() => navigate("/signup")} // Navigates to Signup page
+                onClick={() => navigate("/signup")}
               >
                 Sign Up
               </span>
