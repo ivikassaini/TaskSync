@@ -1,23 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
 import { signup } from "../../services/api"; // Ensure the path is correct
+import { AuthContext } from "../../context/AuthContext"; // Adjust the import path
 
 const Signup = () => {
-  const navigate = useNavigate(); 
+  const { login } = useContext(AuthContext); // Access login function from AuthContext
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [name, setName] = useState(""); // Changed setname to setName
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // State for error messages
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const response = await signup({ email, password, name });
       console.log("Signup successful:", response);
-      // Navigate to the login page or another page on successful signup
-      navigate("/login");
+      
+      // Call login method from AuthContext to set auth state
+      login({ email: response.email, name: response.name }, response.jwtToken);
+      
+      // Navigate to the dashboard after successful signup
+      navigate("/dashboard");
     } catch (err) {
       console.error(err.response?.data?.message || "Something went wrong");
-      // Display error message to the user if needed
+      setError(err.response?.data?.message || "Something went wrong"); // Set error message
     }
   };
 
@@ -32,6 +39,7 @@ const Signup = () => {
         </div>
         <div className="card bg-base-100 w-full max-w-sm shadow-2xl">
           <form className="card-body" onSubmit={handleSignup}>
+            {error && <div className="alert alert-error">{error}</div>} {/* Show error message */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -67,7 +75,7 @@ const Signup = () => {
                 placeholder="Enter your name"
                 className="input input-bordered"
                 value={name}
-                onChange={(e) => setName(e.target.value)} // Changed setname to setName
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
@@ -82,7 +90,7 @@ const Signup = () => {
               Do you have an account?{" "}
               <span
                 className="text-blue-500 cursor-pointer font-bold"
-                onClick={() => navigate("/dashboard")} // Navigates to Login page
+                onClick={() => navigate("/")} // Navigates to Login page
               >
                 Login
               </span>

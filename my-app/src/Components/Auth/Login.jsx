@@ -1,29 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../services/api";
-import { VerifyToken } from "./VerifyToken";
+import { login as apiLogin } from "../../services/api";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // To show errors on the UI
+  const [error, setError] = useState("");
+  const { login } = useContext(AuthContext); // Use login function from context
   const navigate = useNavigate();
-  VerifyToken();  
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error before new login attempt
-  
+    setError("");
+
     try {
-      const response = await login({ email, password });
+      const response = await apiLogin({ email, password });
 
-      // Save token and user data in localStorage
-      localStorage.setItem("jwtToken", response.jwtToken);
-      localStorage.setItem("user", JSON.stringify({ email: response.email, name: response.name }));
-
-      // Redirect to the dashboard
-      navigate("/dashboard");
+      // Save token and user data using context
+      console.log(response)
+      login({ email: response.email, name: response.name }, response.jwtToken);
     } catch (err) {
-      // Display error message
       setError(err.response?.data?.message || "Invalid email or password");
     }
   };
@@ -39,7 +36,7 @@ const Login = () => {
         </div>
         <div className="card bg-base-100 w-full max-w-sm shadow-2xl">
           <form className="card-body" onSubmit={handleLogin}>
-            {error && <div className="alert alert-error">{error}</div>} {/* Show error message */}
+            {error && <div className="alert alert-error">{error}</div>}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -65,11 +62,6 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <label className="label">
-                <a href="#" className="label-text-alt link link-hover">
-                  Forgot password?
-                </a>
-              </label>
             </div>
             <div className="form-control mt-6">
               <button className="btn btn-primary" type="submit">
@@ -79,12 +71,12 @@ const Login = () => {
           </form>
           <div className="text-center mt-4">
             <p>
-              Don't have an account?{" "}
+              Don't you have an account?{" "}
               <span
                 className="text-blue-500 cursor-pointer font-bold"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/signup")} // Navigates to Login page
               >
-                Sign Up
+                Signup
               </span>
             </p>
           </div>
