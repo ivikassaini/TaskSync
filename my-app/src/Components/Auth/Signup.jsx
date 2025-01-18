@@ -90,7 +90,7 @@ const Signup = () => {
               Do you have an account?{" "}
               <span
                 className="text-blue-500 cursor-pointer font-bold"
-                onClick={() => navigate("/")} // Navigates to Login page
+                onClick={() => navigate("/login")} // Navigates to Login page
               >
                 Login
               </span>

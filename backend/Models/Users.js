@@ -14,6 +14,11 @@ const UserSchema = new Schema({
     password:{
         type: String,
         required: true
+    },
+    age:{
+        type: String,
+    }, state:{
+        type: String
     }
 });
 

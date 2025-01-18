@@ -5,12 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 const Dashboard = () => {
   const navigate = useNavigate()
   const { auth, logout } = useContext(AuthContext);
-  useEffect(() => {
-    if (!auth.isAuthenticated) {
-      navigate("/login"); // Redirect to login page
-    }
-  }, [auth.isAuthenticated, navigate]);
-  console.log(auth.user)
+  
   const handleLogoutClick = () => {
     logout();  
   };

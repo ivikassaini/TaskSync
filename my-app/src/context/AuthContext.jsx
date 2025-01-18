@@ -38,7 +38,7 @@ const AuthProvider = ({ children }) => {
       setAuth({ isAuthenticated: false, user: null, jwtToken: null });
       localStorage.removeItem("jwtToken");
       localStorage.removeItem("user");
-      navigate("/"); // Redirect to the login page
+      navigate("/login"); // Redirect to the login page
     } catch (err) {
       console.error("Failed to logout:", err.response?.data?.message || "Unknown error");
     }
