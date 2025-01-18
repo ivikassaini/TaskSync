@@ -31,3 +31,29 @@ export const logout = async () => {
     throw err.response?.data || { message: "Logout failed" };
   }
 };
+
+// Get Profile API call
+export const getProfile = async () => {
+  try {
+    const token = localStorage.getItem("jwtToken");
+    const response = await axios.get(`${API_URL}/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.user;
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to fetch profile" };
+  }
+};
+
+// Update Profile API call
+export const updateProfile = async (data) => {
+  try {
+    const token = localStorage.getItem("jwtToken");
+    const response = await axios.put(`${API_URL}/profile`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.user;
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to update profile" };
+  }
+};
